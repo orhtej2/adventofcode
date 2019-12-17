@@ -7,13 +7,13 @@ def parse(line):
             yield ((posx, posy), (posx, posy + value))
             posy += value
         if token[0] == 'D':
-            yield ((posx, posy - value), (posx, posy))
+            yield ((posx, posy), (posx, posy - value))
             posy -= value
         if token[0] == 'R':
             yield ((posx, posy), (posx + value, posy))
             posx += value
         if token[0] == 'L':
-            yield ((posx - value, posy), (posx, posy))
+            yield ((posx, posy), (posx - value, posy))
             posx -= value
 
 def apply(case, horizontal_runnable, vertical_runnable):
