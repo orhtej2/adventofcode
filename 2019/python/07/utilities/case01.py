@@ -17,14 +17,14 @@ class Amplifier:
 class Input:
     which = True
     def __init__(self, first, second):
-        print(f'{first} {second}')
+        #print(f'{first} {second}')
         self.first = first
         self.second = second
     
     def __call__(self):
         val = self.first if self.which else self.second
         self.which = not self.which
-        print(f'returning {val}')
+        #print(f'returning {val}')
         return val
 
 
