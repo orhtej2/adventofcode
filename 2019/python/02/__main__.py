@@ -10,6 +10,6 @@ program[1] = 12
 program[2] = 2
 print(program)
 
-runner.run(program)
+runner.Runner(program).run()
 
 print(program)

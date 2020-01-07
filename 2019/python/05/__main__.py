@@ -1,12 +1,5 @@
 import sys
 from aoccpu import runner
-
-def return1():
-    return 1
-
-def return5():
-    return 5
-
 def showOutput(value):
     print(f'Output = {{ {value} }}')
 
@@ -17,5 +10,5 @@ program = list(map(int, line.split(',')))
 
 #print(program)
 
-runner.run(program[:], return1, showOutput)
-runner.run(program, return5, showOutput)
+runner.Runner(program[:]).run(lambda : 1, showOutput)
+runner.Runner(program).run(lambda : 5, showOutput)

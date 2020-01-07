@@ -1,6 +1,11 @@
 class BreakoutException(Exception):
     pass
     
+class FunctionThrownException(Exception):
+    def __init__(self, outer, step):
+        self.outer = outer
+        self.step = step
+
 def o_add(input_list, position, param1, param2, param3):
     param3(input_list, input_list[position+3], True, param1(input_list, input_list[position+1]) + param2(input_list, input_list[position+2]))
     return position + 4
@@ -14,8 +19,12 @@ def o_input(source, input_list, position, param1, *_):
     return position + 2
 
 def o_output(sink, input_list, position, param1, *_):
-    sink(param1(input_list, input_list[position+1]))
-    return position + 2
+    value = param1(input_list, input_list[position+1])
+    try:
+        sink(value)
+        return position + 2
+    except Exception as e:
+        raise FunctionThrownException(e, position + 2)
 
 def o_jumpIfTrue(input_list, position, param1, param2, _):
     operand = param1(input_list, input_list[position+1])
