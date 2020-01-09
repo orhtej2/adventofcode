@@ -21,3 +21,21 @@ input_splitted = list(split(input, size))
 aggregated = (list((x.count(0), x.count(1), x.count(2))) for x in input_splitted)
 max_0 = min(aggregated, key=lambda x: x[0])
 print(f'{max_0}, {max_0[1] * max_0[2]}')
+
+result = []
+
+for i in range(size):
+    for x in input_splitted:
+        if x[i] == 2:
+            continue
+        if x[i] == 1:
+            result.append(1);
+            break
+        result.append(0)
+        break
+
+for pixels in split(result, 25):
+    s = ""
+    for x in pixels:
+        s += '#' if x == 1 else ' '
+    print(s)
