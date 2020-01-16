@@ -11,7 +11,7 @@ def memoryParameter(program, x, set = False, value = 0):
     if set:
         program[x] = value
 
-    return program[x]
+    return program.setdefault(x, 0)
 
 class RelativeParameter:
     offset = 0
@@ -24,4 +24,4 @@ class RelativeParameter:
         if set:
             program[self.offset + x] = value
         
-        return program[self.offset + x]
+        return program.setdefault(self.offset + x, 0)

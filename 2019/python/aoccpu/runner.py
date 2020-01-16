@@ -33,7 +33,7 @@ class Runner:
         try:
             while True:
                 (opcode, mode1, mode2, mode3) = decoder.decode(self.program[self.position])
-                #print(opcode)
+                #print(f'{opcode} at {self.position}')
                 operation = self.opcodes.get(opcode, f'Invalid opcode {opcode}')
                 if isinstance(operation, str):
                     print(f"{self.position}:{self.program[self.position]}")
