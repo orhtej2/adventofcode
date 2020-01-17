@@ -1,5 +1,5 @@
 import unittest
-import decoder as d
+from . import decoder as d
 
 class DecoderTests(unittest.TestCase):
     def test_getParameterMode(self):

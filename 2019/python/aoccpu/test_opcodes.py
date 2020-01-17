@@ -1,5 +1,5 @@
 from unittest import TestCase,mock
-import opcodes
+from . import opcodes
 
 
 class TestOpcodes(TestCase):
