@@ -12,4 +12,5 @@ def count(input):
 
     for x in input:
         orbits.setdefault(x[0], []).append(x[1])
+    #print(orbits)
     return count_suborbits(orbits, 'COM', 0)

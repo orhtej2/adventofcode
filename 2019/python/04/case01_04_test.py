@@ -1,5 +1,5 @@
 import unittest
-from aoc2019 import case01
+from aoc2019_04 import case01
 
 class Case01Tests(unittest.TestCase):
     def test_valid(self):

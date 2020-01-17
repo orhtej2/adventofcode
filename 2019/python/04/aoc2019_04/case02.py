@@ -1,4 +1,4 @@
-from aoc2019 import number_utilities
+from . import number_utilities
 
 def isValid(input):
 #    print(f"Input {input}")

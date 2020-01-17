@@ -1,5 +1,5 @@
 import unittest
-from aoc2019 import number_utilities
+from aoc2019_04 import number_utilities
 
 def runTest(assertion, cases):
     for case in cases:

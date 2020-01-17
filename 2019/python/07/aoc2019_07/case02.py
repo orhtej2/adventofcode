@@ -14,7 +14,7 @@ class Chain:
         self.configuration = configuration
 
     def __call__(self):
-        amps = [amplifier.Amplifier(self.program[:], self.configuration[i]) for i in range(5)]
+        amps = [amplifier.Amplifier(dict(self.program), self.configuration[i]) for i in range(5)]
         for i in range(5):
             amps[i].output = _func
 

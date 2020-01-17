@@ -1,13 +1,13 @@
 import sys
 from itertools import permutations
-from utilities import case01
-from utilities import case02
+from aoc2019_07 import case01, case02
 
 
 with open(sys.argv[1], 'r') as f:
     line = f.readline()
 
-program = list(map(int, line.split(',')))
+_program = list(map(int, line.split(',')))
+program = (x : _program[x] for x in range(len(_program)) ) 
 
 input = [0,1,2,3,4]
 

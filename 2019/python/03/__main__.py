@@ -1,6 +1,5 @@
 from sys import argv
-from aoc2019 import case01
-from aoc2019 import case02
+from aoc2019_03 import case01, case02
 
 # execute only if run as a script
 with open(argv[1], 'r') as f:

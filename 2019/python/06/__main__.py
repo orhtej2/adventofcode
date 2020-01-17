@@ -1,5 +1,5 @@
 import sys
-from aoc2019 import case01, case02
+from aoc2019_06 import case01, case02
 
 with open(sys.argv[1], 'r') as f:
     lines = f.readlines()

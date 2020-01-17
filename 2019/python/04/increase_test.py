@@ -1,5 +1,5 @@
 import unittest
-from aoc2019 import number_utilities
+from aoc2019_04 import number_utilities
 
 class UtilitiesTest(unittest.TestCase):
     def test_lower(self):

@@ -1,6 +1,6 @@
 import math
 from functools import partial
-from aoc2019.utilities import parser
+from aoc2019_03.utilities import parser
 
 def find_intersection(dictionary, key, range_lower, range_upper):
     result = math.inf

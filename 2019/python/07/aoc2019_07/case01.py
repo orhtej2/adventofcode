@@ -11,7 +11,7 @@ class Chain:
     def __call__(self):
         result = 0
         for stage in range(0, 5):
-            amp = amplifier.Amplifier(self.program[:], self.configuration[stage])
+            amp = amplifier.Amplifier(dict(self.program), self.configuration[stage])
             result = amp(result)
 
         return result

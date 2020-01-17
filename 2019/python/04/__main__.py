@@ -1,7 +1,5 @@
 from sys import argv, exit
-from aoc2019 import case01
-from aoc2019 import case02
-from aoc2019 import number_utilities
+from aoc2019_04 import case01, case02, number_utilities
 
 if len(argv) < 3:
     print(f"Usage {argv[0]} <lower> <upper>")
