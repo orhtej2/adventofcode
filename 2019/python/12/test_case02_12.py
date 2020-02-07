@@ -10,7 +10,6 @@ class Case02Tests(unittest.TestCase):
         
         self.assertEqual(2772, case02.loop(input))
 
-    #@unittest.skip
     def test_loop_long(self):
         input=[planet.Planet(-8, -10, 0),
                planet.Planet(5, 5, 10),
