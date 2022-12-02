@@ -39,4 +39,3 @@ pub fn main() !void {
 
     print("{d}", .{result});
 }
-}
