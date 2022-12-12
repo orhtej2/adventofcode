@@ -14,7 +14,8 @@
             "externalConsole": false,
             "logging": {
                 "moduleLoad": false
-            }
+            },
+            "preLaunchTask": "Build zig"
         },
         {
             "name": "Test",
