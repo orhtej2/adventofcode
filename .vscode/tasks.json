@@ -4,7 +4,7 @@
         {
             "label": "Build zig",
             "type": "shell",
-            "command": "C:\\Users\\mateu\\Desktop\\zig-windows-x86_64-0.10.0\\zig build-exe ${file}",
+            "command": "zig build-exe ${file}",
             "group": "build",
             "options": {
                 "cwd": "${fileDirname}"
