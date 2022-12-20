@@ -33,26 +33,216 @@ test "distance" {
     try std.testing.expect(5 == try ((Sensor{.x = 1, .y = 1, .closestBeacon = Beacon{.x = 2, .y = -3}}).distance()));
 }
 
-test "excluded" {
-    var s : Sensor = .{
-        .x = 8,
-        .y = 7,
-        .closestBeacon = .{
-            .x = 2,
-            .y = 10
+const Range  = struct {
+    start : i32,
+    end : i32,
+    pub fn rangeUnion(self : *const Range, other : Range) ?Range {
+        if (self.intersects(other)) {
+            return make(std.math.min(self.start, other.start), std.math.max(self.end, other.end));
         }
-    };
 
-    const s1 = try s.yDistance(6);
-    try std.testing.expect(s1 != null);
+        return null;
+    }
+    pub fn intersects(self : *const Range, other : Range) bool {
+        return self.start <= other.end and other.start <= self.end;
+    }
+    pub fn make(a : i32, b : i32) Range {
+        return Range { .start = std.math.min(a, b), .end = std.math.max(a,b ) };
+    }
+    pub fn lower(self : *const Range, other : Range) bool {
+        return self.end < other.start;
+    }
+};
 
-    const area = try s.distance() - s1.?;
-    print("{d} {d}\n", .{area, s1.?});
+test "range.intersects" {
+    try std.testing.expect(Range.make(10, 20).intersects(Range.make(10,11)));
+    try std.testing.expect(Range.make(0, 20).intersects(Range.make(10,11)));
+    try std.testing.expect(Range.make(10, 20).intersects(Range.make(20,21)));
+    try std.testing.expect(Range.make(10, 20).intersects(Range.make(9,11)));
 
-    print("{d} {d}\n", .{s.x - area, s.x + area});
+    try std.testing.expect(!Range.make(10, 20).intersects(Range.make(8,9)));
+    try std.testing.expect(!Range.make(10, 20).intersects(Range.make(80,90)));
+}
 
-    try std.testing.expect(0 == s.x + area);
-    try std.testing.expect(16 == s.x + area);
+test "range.lower" {
+    try std.testing.expect(Range.make(10, 20).lower(Range.make(21,22)));
+    try std.testing.expect(!Range.make(10, 20).lower(Range.make(19,21)));
+}
+
+test "range.union" {
+    try std.testing.expectEqual(Range.make(10, 20), Range.make(10, 20).rangeUnion(Range.make(15,17)).?);
+    try std.testing.expectEqual(Range.make(10, 20), Range.make(10, 15).rangeUnion(Range.make(14,20)).?);
+}
+
+const RangeSet = struct {
+    allocator : std.mem.Allocator,
+    ranges : std.ArrayList(Range),
+    const Self = @This();
+    pub fn init(allocator : std.mem.Allocator) Self {
+        return .{
+            .allocator = allocator,
+            .ranges = std.ArrayList(Range).init(allocator)
+        };
+    }
+
+    pub fn append(self : *RangeSet, range : Range) !void {
+        if (self.ranges.items.len == 0)
+        {
+            try self.ranges.append(range);
+            return;
+        }
+        var idx : usize = 0;
+        while (idx < self.ranges.items.len)
+        {
+            if (range.lower(self.ranges.items[idx])) {
+                if (range.end == self.ranges.items[idx].start - 1) {
+                    self.ranges.items[idx].start = range.start;
+                    try mergeAhead(self, idx);
+                }
+                else {
+                    try self.ranges.insert(idx, range);
+                }
+                return;
+            }
+            else if (range.rangeUnion(self.ranges.items[idx])) |r| {
+                self.ranges.items[idx] = r;
+                try mergeAhead(self, idx);
+                return;
+            }
+            else if (self.ranges.items[idx].end == range.start - 1) {
+                self.ranges.items[idx].end = range.end;
+                try mergeAhead(self, idx);
+
+                return;
+            }
+
+            idx += 1;
+        }
+        try self.ranges.append(range);
+    }
+
+    fn mergeAhead(self : *RangeSet, idx: usize) !void {
+        const pos = idx;
+        const limit = idx + 1;
+        while (limit < self.ranges.items.len) {
+            if (self.ranges.items[pos].rangeUnion(self.ranges.items[limit])) |r2| {
+                self.ranges.items[pos] = r2;
+                _ = self.ranges.orderedRemove(limit);
+            }
+            else if (self.ranges.items[pos].end == self.ranges.items[limit].start - 1) {
+                self.ranges.items[pos].end = self.ranges.items[limit].end;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+};
+
+fn runCase(input : [] const Range, expected : [] const Range) !void {
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    defer arena.deinit();
+
+    const allocator = arena.allocator();
+    var set : RangeSet = RangeSet.init(allocator);
+
+    for (input) |r| {
+        try set.append(r);
+        print("{}\n{any}\n", .{r, set.ranges.items});
+    }
+
+    print("\nexpected:{any}\nactual: {any}\n\n", .{expected, set.ranges.items});
+    try std.testing.expectEqualSlices(Range, expected, set.ranges.items);
+}
+
+test "rangeSet" {
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    defer arena.deinit();
+
+    const allocator = arena.allocator();
+    var set : RangeSet = RangeSet.init(allocator);
+
+    try set.append(Range.make(10, 20));
+
+    try std.testing.expectEqualSlices(
+        Range, 
+        &[_]Range{Range.make(10, 20)}, 
+        set.ranges.items
+    );
+
+    try set.append(Range.make(12, 15));
+
+    try std.testing.expectEqualSlices(
+        Range, 
+        &[_]Range{Range.make(10, 20)}, 
+        set.ranges.items
+    );
+
+    try set.append(Range.make(22, 25));
+
+    try std.testing.expectEqualSlices(
+        Range, 
+        &[_]Range{Range.make(10, 20), Range.make(22, 25)}, 
+        set.ranges.items
+    );
+
+    try set.append(Range.make(19, 25));
+
+    try std.testing.expectEqualSlices(
+        Range, 
+        &[_]Range{Range.make(10, 25)}, 
+        set.ranges.items
+    );
+
+    try set.append(Range.make(5, 6));
+
+    try std.testing.expectEqualSlices(
+        Range, 
+        &[_]Range{Range.make(5, 6), Range.make(10, 25)}, 
+        set.ranges.items
+    );
+
+    try set.append(Range.make(8, 8));
+
+    try std.testing.expectEqualSlices(
+        Range, 
+        &[_]Range{Range.make(5, 6), Range.make(8, 8), Range.make(10, 25)}, 
+        set.ranges.items
+    );
+}
+
+test "parametrized rangeSet" {
+    try runCase(
+        &[_]Range{Range.make(1, 1), Range.make(2, 2)},
+        &[_]Range{Range.make(1,2)}
+    );
+
+    try runCase(
+        &[_]Range{Range.make(2, 2), Range.make(1, 1)},
+        &[_]Range{Range.make(1,2)}
+    );
+
+    try runCase(
+        &[_]Range{Range.make(1, 2), Range.make(1, 1)},
+        &[_]Range{Range.make(1,2)}
+    );
+
+    try runCase(
+        &[_]Range{Range.make(1, 2), Range.make(3, 4)},
+        &[_]Range{Range.make(1,4)}
+    );
+
+    try runCase(
+        &[_]Range{Range.make(1, 2), Range.make(4, 5), Range.make(3, 3)},
+        &[_]Range{Range.make(1,5)}
+    );
+
+    try runCase(
+        &[_]Range{Range.make(266462, 312678), Range.make(1555500, 4000001), Range.make(858743, 1172421),
+            Range.make(2357608, 2357608), Range.make(0, 266462), Range.make(0, 1642446), Range.make(828792, 2118056), Range.make(2370712, 4000001)},
+        &[_]Range{Range.make(0,4000001)}
+    );
 }
 
 pub fn main() !void {
@@ -88,52 +278,43 @@ pub fn main() !void {
     //     print("{}\n", .{s});
     // }
 
-    var known : [] bool = try allocator.alloc(bool, @intCast(usize, max));
+    var known : RangeSet = RangeSet.init(allocator);
 
+    var last : std.ArrayList(Range) = std.ArrayList(Range).init(allocator);
     var search : i32 = 0;
     var found : bool = false;
     while (search < max and !found)
     {
-        std.mem.set(bool, known, false);
+        known.ranges.clearRetainingCapacity();
+        last.clearRetainingCapacity();
         for (sensors.items) |s| {
             if (try s.yDistance(search)) |dst|
             {
                 const area = try s.distance() - dst;
-                var x : usize = @intCast(usize, @max(0, s.x - area));
-                const limit : usize = @intCast(usize, @min(max, s.x + area));
-                while (x < limit)
-                {
-                    known[x] = true;
-                    x += 1;
-                }
+                const start : i32 = @max(0, s.x - area);
+                const end : i32 = @min(max, s.x + area);
+                const range = Range.make(start, end);
+                try known.append(range);
+                try last.append(range);
             }
         }
 
-        for (known)|k|
-        {
-            if (!k)
-            {
-                found = true;
-                break;
-            }
+        if (known.ranges.items.len != 1
+            or (known.ranges.items.len == 1 and (known.ranges.items[0].start != 0 or known.ranges.items[0].end != max))) {
+            break;
         }
+        
         search += 1;
 
-        if (@mod(search, 100) == 0)
-        {
-            print("{d}\n", .{search});
-        }
+        // if (@mod(search, 100) == 0)
+        // {
+        //     print("{d}\n", .{search});
+        // }
     }
     
-    var x : usize = 0;
-    while (x <= max)
-    {
-        if (!known[x])
-        {
-            print("{d} {d} {d}\n", .{x, search, x * 4000000 + @intCast(usize, search)});
-        }
-        x += 1;
-    }
+    print("{any}\n{any}\n\n{d}\n\n", .{known.ranges.items, last.items, search});
+
+    print("{d}\n", .{10884456000000 + @intCast(i64, search)});
 }
 
 fn parse(line : [] const u8) !Sensor {
