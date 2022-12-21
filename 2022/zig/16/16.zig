@@ -120,22 +120,52 @@ pub fn main() !void {
 
     try computeDistances(map);
 
-    // dumpDistances(map, "AA");
+    dumpDistances(map, "AA");
 
     //print("{d}\n", .{computeScore(map, &[_][] const u8 {"DD", "BB", "JJ", "HH", "EE", "CC"})});
     
     std.sort.sort([] const u8, destinations.items, {}, compare);
     dumpOrder(destinations.items);
+
     var max : u32 = 0;
     while (next_permutation(destinations.items)) {
+        //dumpOrder(destinations.items);
         const score = computeScore(&map, destinations.items);
         if (score > max)
             max = score;
+            
+        var limit = computeTimeLimit(map, destinations.items);
+        if (limit < destinations.items.len) {
+            std.sort.sort([] const u8, destinations.items[limit + 1..], {}, compareDesc);
+        }
+        
         // print("{d} ", .{score});
-        // dumpOrder(destinations.items);
     }
 
     print("{d}", .{max});
+}
+
+fn computeTimeLimit(map : std.StringHashMap(Room), order : [][]const u8) usize {
+    var timeLeft : u32 = 30;
+
+    var current : []const u8 = "AA";
+
+    for (order) |next, idx| {
+        // print("{s}", .{current});
+        var distance = map.get(current).?.distances.get(next).? + 1;
+        if (distance >= timeLeft)
+        {
+            // print("\n", .{});
+            return idx;
+        }
+        // print("[{d}] ", .{distance});
+        timeLeft -= distance;
+        current = next;
+    }
+
+    // print("\n", .{});
+
+    return order.len;
 }
 
 fn dumpOrder(order : [][] const u8) void {
@@ -150,6 +180,16 @@ fn dumpOrder(order : [][] const u8) void {
     }
 
     print("\n", .{});
+}
+
+fn compareDesc(ctx : void, lhs : [] const u8, rhs : [] const u8) bool {
+    _ = ctx;
+    for (lhs) |c, idx| {
+        if (c != rhs[idx])
+            return c > rhs[idx];
+    }
+
+    return false;
 }
 
 fn compare(ctx : void, lhs : [] const u8, rhs : [] const u8) bool {
@@ -233,22 +273,22 @@ fn computeScore(map : * const std.StringHashMap(Room), order : [] const [] const
     var result : u32 = 0;
     
     var currentFlow : u32 = 0;
-    var timeLeft : i32 = 30;
+    var timeLeft : u32 = 30;
 
     var current : []const u8 = "AA";
 
     for (order) |next| {
-        var distance = map.get(current).?.distances.get(next).? + 1;
+        const distance : u32 = map.get(current).?.distances.get(next).? + 1;
         if (distance > timeLeft) {
             break;
         }
         result += distance * currentFlow;
         currentFlow += map.get(next).?.valveFlowRate;
-        timeLeft -= @bitCast(i32, distance);
+        timeLeft -= distance;
         current = next;
     }
 
-    result += @bitCast(u32, timeLeft) * currentFlow;
+    result += timeLeft * currentFlow;
 
     return result;
 }
