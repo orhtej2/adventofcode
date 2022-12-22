@@ -1,0 +1,9 @@
+This day is travelling salesman problem. Even if you disregard locations with valves with flow rate 0 this still baloons up fast. Thought the complexity is not there because the sample solves in reasonable time (complexity = `6!`). However, for real task it's `15!`.
+
+My initial idea was to create every [pemutation](https://en.wikipedia.org/wiki/Permutation) of non-zero-flow destinations a'la C++'s [`std::next_permutation`](https://en.cppreference.com/w/cpp/algorithm/next_permutation), grabbed the algorithm from [here](https://www.nayuki.io/page/next-lexicographical-permutation-algorithm) or, more precisely, translated [c implementation](https://www.nayuki.io/res/next-lexicographical-permutation-algorithm/nextperm.c). 
+
+Still, `15!` is a lot so I started investigating. What happens in real solution is, for my input, the path length for all non-zero-valves sorted alphabetically route is `157`, way more, than `30` time limit. So I started pruning the paths that sorted nodes we're not going to reach anyway by sorting remaining nodes descendingly, which would force next permutation to change the last cave. With this optimization running time for pt 1 is reasonable.
+
+For pt 2 I decided to select path for agent A as per pt 1, then test for highest score in remaining nodes for agent B. While this increases complexity **a lot** I still managed to get the answer in reasonable time (couple of minutes).
+
+Additional optimization would be to either run multithreaded or, more reasonably, change the way simulation is run AND implement proper [DFS](https://en.wikipedia.org/wiki/Depth-first_search) for finding paths through the caves.
