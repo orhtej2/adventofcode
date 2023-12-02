@@ -38,7 +38,10 @@
             "sourceLanguages": [
                 "swift"
             ],
-            "args": ["--input", "input.txt"],
+            "args": [
+                "--input",
+                "input.txt"
+            ],
             "cwd": "${workspaceFolder:adventofcode}\\2023\\swift\\01",
             "name": "Debug day01 (2023\\swift\\01)",
             "program": "${workspaceFolder:adventofcode}\\2023\\swift\\01\\.build\\debug\\day01.exe",
@@ -50,11 +53,44 @@
             "sourceLanguages": [
                 "swift"
             ],
-            "args": ["--input", "input.txt"],
+            "args": [
+                "--input",
+                "input.txt"
+            ],
             "cwd": "${workspaceFolder:adventofcode}\\2023\\swift\\01",
             "name": "Release day01 (2023\\swift\\01)",
             "program": "${workspaceFolder:adventofcode}\\2023\\swift\\01\\.build\\release\\day01.exe",
             "preLaunchTask": "swift: Build Release day01 (2023\\swift\\01)"
+        },
+        {
+            "type": "swift-lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "args": [
+                "--input",
+                "input.txt"
+            ],
+            "cwd": "${workspaceFolder:adventofcode}\\2023\\swift\\01",
+            "name": "Debug day01b (2023\\swift\\01)",
+            "program": "${workspaceFolder:adventofcode}\\2023\\swift\\01\\.build\\debug\\day01b.exe",
+            "preLaunchTask": "swift: Build Debug day01b (2023\\swift\\01)"
+        },
+        {
+            "type": "swift-lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "args": [
+                "--input",
+                "input.txt"
+            ],
+            "cwd": "${workspaceFolder:adventofcode}\\2023\\swift\\01",
+            "name": "Release day01b (2023\\swift\\01)",
+            "program": "${workspaceFolder:adventofcode}\\2023\\swift\\01\\.build\\release\\day01b.exe",
+            "preLaunchTask": "swift: Build Release day01b (2023\\swift\\01)"
         }
     ]
 }
