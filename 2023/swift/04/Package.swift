@@ -18,5 +18,12 @@ let package = Package(
             ],
             path: "Sources/a"
         ),
+        .executableTarget(
+            name: "day04b",
+            dependencies: [
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            ],
+            path: "Sources/b"
+        ),
     ]
 )
