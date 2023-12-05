@@ -10,16 +10,6 @@
                 "cwd": "${fileDirname}"
             },
             "problemMatcher": []
-        },
-        {
-            "label": "Build Swift",
-            "type": "shell",
-            "command": "zig build-exe ${file}",
-            "group": "build",
-            "options": {
-                "cwd": "${fileDirname}"
-            },
-            "problemMatcher": []
         }
     ]
 }
