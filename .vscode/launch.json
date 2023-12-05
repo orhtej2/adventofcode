@@ -211,6 +211,36 @@
             "name": "Release day03b (2023\\swift\\03)",
             "program": "${workspaceFolder:adventofcode}\\2023\\swift\\03\\.build\\release\\day03b.exe",
             "preLaunchTask": "swift: Build Release day03b (2023\\swift\\03)"
+        },
+        {
+            "type": "swift-lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "args": [
+                "--input",
+                "input.txt"
+            ],
+            "cwd": "${workspaceFolder:adventofcode}\\2023\\swift\\04",
+            "name": "Debug day04 (2023\\swift\\04)",
+            "program": "${workspaceFolder:adventofcode}\\2023\\swift\\04\\.build\\debug\\day04.exe",
+            "preLaunchTask": "swift: Build Debug day04 (2023\\swift\\04)"
+        },
+        {
+            "type": "swift-lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "args": [
+                "--input",
+                "input.txt"
+            ],
+            "cwd": "${workspaceFolder:adventofcode}\\2023\\swift\\04",
+            "name": "Release day04 (2023\\swift\\04)",
+            "program": "${workspaceFolder:adventofcode}\\2023\\swift\\04\\.build\\release\\day04.exe",
+            "preLaunchTask": "swift: Build Release day04 (2023\\swift\\04)"
         }
     ]
 }
