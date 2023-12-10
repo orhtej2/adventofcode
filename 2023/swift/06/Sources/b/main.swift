@@ -6,10 +6,6 @@ struct Day06b: ParsableCommand {
   @Option(help: "Specify the input")
   public var input: String
 
-  func numbers(_ fromString: String) -> [Int] {
-    return fromString.components(separatedBy: " ").compactMap { Int($0) }
-  }
-
   public func run() throws {
     guard let filecontent = try? String(contentsOfFile: input, encoding: .utf8)
     else {
