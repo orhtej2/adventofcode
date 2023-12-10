@@ -331,6 +331,66 @@
             "name": "Release day05 (2023\\swift\\05)",
             "program": "${workspaceFolder:adventofcode}\\2023\\swift\\05\\.build\\release\\day05.exe",
             "preLaunchTask": "swift: Build Release day05 (2023\\swift\\05)"
+        },
+        {
+            "type": "swift-lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "args": [
+                "--input",
+                "input.txt"
+            ],
+            "cwd": "${workspaceFolder:adventofcode}\\2023\\swift\\06",
+            "name": "Debug day06 (2023\\swift\\06)",
+            "program": "${workspaceFolder:adventofcode}\\2023\\swift\\06\\.build\\debug\\day06.exe",
+            "preLaunchTask": "swift: Build Debug day06 (2023\\swift\\06)"
+        },
+        {
+            "type": "swift-lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "args": [
+                "--input",
+                "input.txt"
+            ],
+            "cwd": "${workspaceFolder:adventofcode}\\2023\\swift\\06",
+            "name": "Release day06 (2023\\swift\\06)",
+            "program": "${workspaceFolder:adventofcode}\\2023\\swift\\06\\.build\\release\\day06.exe",
+            "preLaunchTask": "swift: Build Release day06 (2023\\swift\\06)"
+        },
+        {
+            "type": "swift-lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "args": [
+                "--input",
+                "input.txt"
+            ],
+            "cwd": "${workspaceFolder:adventofcode}\\2023\\swift\\06",
+            "name": "Debug day06b (2023\\swift\\06)",
+            "program": "${workspaceFolder:adventofcode}\\2023\\swift\\06\\.build\\debug\\day06b.exe",
+            "preLaunchTask": "swift: Build Debug day06b (2023\\swift\\06)"
+        },
+        {
+            "type": "swift-lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "args": [
+                "--input",
+                "input.txt"
+            ],
+            "cwd": "${workspaceFolder:adventofcode}\\2023\\swift\\06",
+            "name": "Release day06b (2023\\swift\\06)",
+            "program": "${workspaceFolder:adventofcode}\\2023\\swift\\06\\.build\\release\\day06b.exe",
+            "preLaunchTask": "swift: Build Release day06b (2023\\swift\\06)"
         }
     ]
 }
