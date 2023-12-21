@@ -160,9 +160,11 @@ struct Day10: ParsableCommand {
     var counterclockwise = 0
     var prevDirection = exits[0]
     var starters = [Coord: [Direction]]()
+    var mainLoop = Set<Coord>()
+    mainLoop.insert(Coord(start))
     repeat {
       current = add(current, exits[0].coordDiff())
-      if current == start {
+      if !mainLoop.insert(Coord(current)).inserted {
         break
       }
       exits[0] = map[current.1][current.0].directions.first(where: { $0 != exits[0].opposite() })!
@@ -186,9 +188,6 @@ struct Day10: ParsableCommand {
         counterclockwise += 1
       }
     }
-    // if startExits[1] != startExits[0] {
-    //   starters[Coord(start)] = startExits
-    // }
 
     print("Clockwise is \(clockwise)")
     print("Counterclockwise is \(counterclockwise)")
@@ -207,7 +206,7 @@ struct Day10: ParsableCommand {
         if c.0 < 0 || c.0 >= map[0].count || c.1 < 0 || c.1 >= map.count {
           continue
         }
-        if map[c.1][c.0].type == .ground {
+        if !mainLoop.contains(Coord(c)) {
           trueStarters.append((Coord(c), d))
         }
       }
@@ -223,47 +222,47 @@ struct Day10: ParsableCommand {
       let next = add((current.x, current.y), currentDirection.coordDiff())
       if next.1 >= 0 && next.1 < map.count
         && next.0 >= 0 && next.0 < map[0].count
-        && map[next.1][next.0].type == .ground {
+        && !mainLoop.contains(Coord(next)) {
         trueStarters.append((Coord(next), currentDirection))
       }
     }
     print(result)
 
-    for (y, line) in map.enumerated() {
-      for (x, cell) in line.enumerated() {
-        if (seen.contains(Coord((x, y)))) {
-          print("O", terminator: "")
-          continue
-        }
-        let d = starters[Coord((x, y))]
-        if d != nil {
-          if (d!.count == 2) {
-            print("x", terminator: "")
-          } else {
-            let d2 = d![0].perpendicular()[direction.rawValue]
-            switch d2 {
-            case .north:
-              print("^", terminator: "")
-            case .south:
-              print("v", terminator: "")
-            case .west:
-              print("<", terminator: "")
-            case .east:
-              print(">", terminator: "")
-            }
-          }
-          continue
-        }
-        switch cell.type {
-        case .ground:
-          print(".", terminator: "")
-        case .pipe:
-          print("|", terminator: "")
-        case .start:
-          print("S", terminator: "")
-        }
-      }
-      print("")
-    }
+    // for (y, line) in map.enumerated() {
+    //   for (x, cell) in line.enumerated() {
+    //     if (seen.contains(Coord((x, y)))) {
+    //       print("O", terminator: "")
+    //       continue
+    //     }
+    //     let d = starters[Coord((x, y))]
+    //     if d != nil {
+    //       if (d!.count == 2) {
+    //         print("x", terminator: "")
+    //       } else {
+    //         let d2 = d![0].perpendicular()[direction.rawValue]
+    //         switch d2 {
+    //         case .north:
+    //           print("^", terminator: "")
+    //         case .south:
+    //           print("v", terminator: "")
+    //         case .west:
+    //           print("<", terminator: "")
+    //         case .east:
+    //           print(">", terminator: "")
+    //         }
+    //       }
+    //       continue
+    //     }
+    //     switch cell.type {
+    //     case .ground:
+    //       print(".", terminator: "")
+    //     case .pipe:
+    //       print("|", terminator: "")
+    //     case .start:
+    //       print("S", terminator: "")
+    //     }
+    //   }
+    //   print("")
+    // }
   }
 }

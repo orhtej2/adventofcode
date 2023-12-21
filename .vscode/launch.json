@@ -610,7 +610,7 @@
             ],
             "args": [
                 "--input",
-                "input4.txt"
+                "input.txt"
             ],
             "cwd": "${workspaceFolder:adventofcode}\\2023\\swift\\10",
             "name": "Debug day10b (2023\\swift\\10)",
