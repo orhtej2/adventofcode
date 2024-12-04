@@ -89,11 +89,11 @@ fn is_valid_report_v2(report: []int) bool = {
 export fn main() void = {
     let valid = 0u, validv2 = 0u;
     for (true) {
-		let line = match(bufio::read_line(os::stdin)!) {
-			case let line: []u8 => yield strings::fromutf8(line)!;
-			case io::EOF => break;
-		};
-		let report = match(parse_report(line)!) {
+        let line = match(bufio::read_line(os::stdin)!) {
+            case let line: []u8 => yield strings::fromutf8(line)!;
+            case io::EOF => break;
+        };
+        let report = match(parse_report(line)!) {
             case let report: []int => yield report;
             case io::EOF => break;
         };

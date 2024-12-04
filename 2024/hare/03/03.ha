@@ -15,10 +15,10 @@ export fn main() void = {
     let result = 0, resultp2 = 0;
     let enabled = true;
     for (true) {
-		let line = match(bufio::read_line(os::stdin)!) {
-			case let line: []u8 => yield strings::fromutf8(line)!;
-			case io::EOF => break;
-		};
+        let line = match(bufio::read_line(os::stdin)!) {
+            case let line: []u8 => yield strings::fromutf8(line)!;
+            case io::EOF => break;
+        };
         const results = regex::findall(&re, line);
         defer regex::result_freeall(results);
         for (const r .. results) {

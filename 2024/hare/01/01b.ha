@@ -8,23 +8,23 @@ use strconv;
 use strings;
 
 export fn main() void = {
-	if (len(os::args) != 2) {
-		fmt::fatalf("Usage: {} <input>", os::args[0]);
-	};
+    if (len(os::args) != 2) {
+        fmt::fatalf("Usage: {} <input>", os::args[0]);
+    };
 
-	const path = os::args[1];
-	const file = match (os::open(path)) {
-	case let file: io::file =>
-		yield file;
-	case let err: fs::error =>
-		fmt::fatalf("Error opening {}: {}",
-			path, fs::strerror(err));
-	};
-	defer io::close(file)!;
+    const path = os::args[1];
+    const file = match (os::open(path)) {
+    case let file: io::file =>
+        yield file;
+    case let err: fs::error =>
+        fmt::fatalf("Error opening {}: {}",
+            path, fs::strerror(err));
+    };
+    defer io::close(file)!;
     
     const input = io::drain(file)!;
-	const input = strings::fromutf8(input)!;
-	const input = strings::split(input, "\n");
+    const input = strings::fromutf8(input)!;
+    const input = strings::split(input, "\n");
     defer free(input);
 
     const length = len(input);
