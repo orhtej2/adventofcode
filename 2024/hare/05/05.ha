@@ -5,6 +5,7 @@ use hash;
 use hash::fnv;
 use io;
 use os;
+use sort;
 use strings;
 use strconv;
 
@@ -34,7 +35,7 @@ fn make_set(val: u32) set = {
     return retval;
 };
 
-fn contains(set: *set, val: u32)bool = {
+fn contains(set: const *set, val: u32)bool = {
     const hash = int_hash(val);
     let bucket = &set.entries[hash % len(set.entries)];
     for (let i = 0z; i < len(bucket); i += 1) {
@@ -87,19 +88,19 @@ fn order_append(order: *order, key: u32, val: u32)bool = {
     return true;
 };
 
-fn order_find(order: *order, key: u32)[]u32 = {
+fn order_find(order: const *order, key: u32)set = {
     const hash = int_hash(key);
     let bucket = &order.orderings[hash % len(order.orderings)];
 	for (let i = 0z; i < len(*bucket); i += 1) {
 		if (bucket[i].key == key) {
-            return bucket[i].entries.all;
+            return bucket[i].entries;
 		};
 	};
 
-    return [];
+    return set { ... };
 };
 
-fn validate(rules: *order, line: str) u32 = {
+fn validate(rules: const *order, line: str) u32 = {
     const s = strings::split(line,",");
     defer free(s);
     let seen = set {
@@ -109,7 +110,7 @@ fn validate(rules: *order, line: str) u32 = {
         const n = strconv::stou32(n)!;
         fmt::printf("{} ", n)!;
         let rules = order_find(rules, n);
-        for (const rule .. rules) {
+        for (const rule .. rules.all) {
             if (contains(&seen, rule)) {
                 return 0;
             };
@@ -120,10 +121,47 @@ fn validate(rules: *order, line: str) u32 = {
     return strconv::stou32(s[len(s)/2])!;
 };
 
-export fn main() void = {
-    let rules: order = order {
-        ...
+let rules: order = order {
+    ...
+};
+
+fn relative_order(a: const *opaque, b: const *opaque) int = {
+    const a = *(a: const *u32), b = *(b: const *u32);
+    const a_rules = order_find(&rules, a);
+    if (contains(&a_rules, b)) {
+        return -1;
     };
+    const b_rules = order_find(&rules, b);
+    if (contains(&b_rules, a)) {
+        return 1;
+    };
+    return 0;
+};
+
+fn validatep2(rules: const *order, line: str) u32 = {
+    const s2 = strings::split(line,",");
+    defer free(s2);
+
+    let s: []u32 = [];
+    for (let n .. s2) {
+        const n = strconv::stou32(n)!;
+        append(s, n);
+    };
+
+    sort::sort(s, size(u32), &relative_order);
+
+    // let ow: []str = [];
+    // defer free(ow);
+    // for (const n .. s) { 
+    //     append(ow, strconv::u32tos(n));
+    // };
+
+    //assert(validate(rules, strings::join(",", ow)) > 0);
+
+    return s[len(s)/2];
+};
+
+export fn main() void = {
     for (true) {
         let line = match(bufio::read_line(os::stdin)!) {
             case let line: []u8 => yield strings::fromutf8(line)!;
@@ -144,19 +182,24 @@ export fn main() void = {
     //     fmt::printfln("{} with {}", i, len(rules.orderings[i]))!;
     // };
 
-    let result = 0u;
+    let result = 0u, resultp2 = 0u;
     for (true) {
         let line = match(bufio::read_line(os::stdin)!) {
             case let line: []u8 => yield strings::fromutf8(line)!;
             case io::EOF => break;
         };
         if (len(line) > 0) {
-            result += validate(&rules, line);
+            const r = validate(&rules, line);
+            if (r > 0) {
+                result += r;
+            } else {
+                resultp2 += validatep2(&rules, line);
+            };
         } else {
             break;
         };
         fmt::println()!;
     };
 
-    fmt::printfln("Result is {}", result)!;
+    fmt::printfln("Result is {}, p2: {}", result, resultp2)!;
 };
