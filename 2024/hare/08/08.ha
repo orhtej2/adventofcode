@@ -134,8 +134,7 @@ export fn main() void = {
     let map = map {
         ...
     };
-
-    defer free_map(&map);
+    // defer free_map(&map);
 
     for (true) {
         let line = match(bufio::read_line(os::stdin)!) {
@@ -160,26 +159,54 @@ export fn main() void = {
     let spots = set {
         ...
     };
+    // defer free_set(&spots);
+
+    let spotsp2 = set {
+        ...
+    };
+    // defer free_set(&spotsp2);
 
     for (let r .. map.keys) {
         const s = map_find(&map, r);
         const l = len(s.all);
+        fmt::println(l)!;
         for (let i = 0z; i < l - 1; i += 1) {
             for (let j = i + 1; j < l; j += 1) {
+                fmt::printfln("[{}. {}]", i, j)!;
                 fmt::printfln("{} at {}/{} vs {}/{}", r, s.all[i].x, s.all[i].y, s.all[j].x, s.all[j].y)!;
                 const xdiff = (s.all[i].x : int) - ( s.all[j].x: int);
                 const ydiff = (s.all[i].y : int) - ( s.all[j].y: int);
                 fmt::printfln("x {} y {}", xdiff, ydiff)!;
 
-                const xa = (s.all[i].x : int) + xdiff;
-                const ya = (s.all[i].y : int) + ydiff;
-                if (xa > 0 && xa <= maxx && ya > 0 && ya <= maxy) {
-                    set_append(&spots, point { x = (xa : u32), y = (ya : u32)});
+                let cnt = 0;
+                for (true) {
+                    const xa = (s.all[i].x : int) + cnt * xdiff;
+                    const ya = (s.all[i].y : int) + cnt * ydiff;
+                    if (xa > 0 && xa <= maxx && ya > 0 && ya <= maxy) {
+                        if (cnt == 1) {
+                            set_append(&spots, point { x = (xa : u32), y = (ya : u32)});
+                        };
+                        set_append(&spotsp2, point { x = (xa : u32), y = (ya : u32)});
+                    } else {
+                        break;
+                    };
+                    cnt += 1;
+                    // break;
                 };
-                const xa = (s.all[j].x : int) - xdiff;
-                const ya = (s.all[j].y : int) - ydiff;
-                if (xa > 0 && xa <= maxx && ya > 0 && ya <= maxy) {
-                    set_append(&spots, point { x = (xa : u32), y = (ya : u32)});
+                cnt = 0;
+                for (true) {
+                    const xa = (s.all[j].x : int) - cnt * xdiff;
+                    const ya = (s.all[j].y : int) - cnt * ydiff;
+                    if (xa > 0 && xa <= maxx && ya > 0 && ya <= maxy) {
+                        if (cnt == 1) {
+                            set_append(&spots, point { x = (xa : u32), y = (ya : u32)});
+                        };
+                        set_append(&spotsp2, point { x = (xa : u32), y = (ya : u32)});
+                    } else {
+                        break;
+                    };
+                    cnt += 1;
+                    // break;
                 };
                 // break;
             };
@@ -204,5 +231,5 @@ export fn main() void = {
     };
 
 
-    fmt::printfln("Result is {}", spots.count)!;
+    fmt::printfln("Result is {}, p2 is {}", spots.count, spotsp2.count)!;
 };
