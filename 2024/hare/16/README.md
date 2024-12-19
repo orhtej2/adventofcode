@@ -1,0 +1,1 @@
+Heavily inspired by [this solution](https://eviltoast.org/post/10805146/10325532) as my initial BFS was failing miserably on actual input in part 2.
